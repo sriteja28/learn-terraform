@@ -4,7 +4,7 @@ resource "aws_instance" "web" {
   instance_type = "t3.micro"
 
   tags = {
-    Name = "HelloWorld"
+    Name = "HelloWorld-${count.index}"
   }
 }
 
@@ -15,5 +15,5 @@ data "aws_ami" "example" {
 }
 
 variable "instances" {
-  default = ["frontend", "catalogue", "cart", "mongodb"]
+  default = ["frontend", "catalogue", "cart"]
 }
