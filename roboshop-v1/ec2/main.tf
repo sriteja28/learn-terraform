@@ -1,6 +1,6 @@
 resource "aws_instance" "web" {
   ami           = data.aws_ami.example.id
-  instance_type = "t3.micro"
+  instance_type = "t3.small"
   vpc_security_group_ids = [aws_security_group.sg.id]
 
   tags = {
@@ -16,11 +16,20 @@ resource "aws_instance" "web" {
 
     inline = [
       "sudo labauto ansible",
-      "ansible-pull -i localhost -U https://github.com/sriteja28/roboshop-ansible main.yml -e env=dev -e role_name=frontend"
+      "ansible-pull -i localhost, -U https://github.com/sriteja28/roboshop-ansible main.yml -e env=dev -e role_name=${var.name}"
     ]
   }
 
 }
+
+resource "aws_route53_record" "www" {
+  zone_id = "Z070672135BYB8H2ZSHPN"
+  name    = "${var.name}-dev"
+  type    = "A"
+  ttl     = 30
+  records = [aws_instance.web.private_ip]
+}
+
 
 data "aws_ami" "example" {
   owners = ["973714476881"]
