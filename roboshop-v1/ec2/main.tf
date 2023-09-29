@@ -1,17 +1,17 @@
 resource "aws_instance" "web" {
   ami           = data.aws_ami.example.id
   instance_type = "t3.micro"
-  vpc_security_group_ids = ["sg-0df2cde9ab8f70430"]
+  vpc_security_group_ids = [aws_security_group.sg.id]
 
   tags = {
-    Name = "provisioner"
+    Name = var.name
   }
   provisioner "remote-exec" {
     connection {
       type     = "ssh"
       user     = "centos"
       password = "DevOps321"
-       host     = self.public_ip
+      host     = self.public_ip
     }
 
     inline = [
@@ -19,6 +19,7 @@ resource "aws_instance" "web" {
       "ansible-pull -i localhost -U https://github.com/sriteja28/roboshop-ansible main.yml -e env=dev -e role_name=frontend"
     ]
   }
+
 }
 
 data "aws_ami" "example" {
@@ -26,3 +27,28 @@ data "aws_ami" "example" {
   most_recent      = true
   name_regex       = "Centos-8-DevOps-Practice"
 }
+
+resource "aws_security_group" "sg" {
+  name        = var.name
+  description = "Allow TLS inbound traffic"
+
+  ingress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = var.name
+  }
+}
+
+variable "name" {}
