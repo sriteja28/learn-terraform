@@ -32,10 +32,11 @@ output "devops_topics" {
   value = var.classes["devops"]["topics"]
 }
 
-# Lookup is to pick up a value from a Map
+## Lookup is to pick up a value from a Map
 output "aws_topics" {
   value = lookup(lookup(var.classes, "aws",null), "topics","No topics so far")
 }
+
 
 # Element is to pick up a value from a list
 output "fruit_0" {
